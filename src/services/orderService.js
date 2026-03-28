@@ -1,6 +1,6 @@
 import API from "./api";
 
-export const getOrders = async (id) => {
+export const getOrders = async () => {
   const res = await API.get("/orders");
   return res.data;
 };
