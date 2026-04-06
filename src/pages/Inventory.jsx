@@ -18,7 +18,7 @@ export default function Inventory() {
 
   // 🔍 Filter Logic
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
+   (p.name || "").toLowerCase().includes(search.toLowerCase())
   );
 
   // 📊 Stats Calculation
