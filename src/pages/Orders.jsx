@@ -50,8 +50,8 @@ export default function Orders() {
                     <td className="p-3">{order.clientName}</td>
                     <td className="p-3 text-green-600 font-semibold">₹{order.total}</td>
                     <td className="p-3 text-gray-500">
-                        {order.createdAt
-                        ? new Date(order.createdAt).toLocaleDateString()
+                        {order.orderDate
+                        ? new Date(order.orderDate).toLocaleDateString()
                         : "N/A"}
                     </td>
                 </tr>
