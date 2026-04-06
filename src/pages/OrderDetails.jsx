@@ -57,7 +57,7 @@ export default function OrderDetails() {
         <p><b>Client:</b> {order.clientName}</p>
         <p><b>Phone:</b> {order.clientPhone}</p>
         <p><b>Address:</b> {order.clientAddress}</p>
-        <p><b>Date:</b> {order.createdAt}</p>
+        <p><b>Date:</b> {order.orderDate}</p>
       </div>
 
       {/* Items Table */}
