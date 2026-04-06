@@ -6,7 +6,6 @@ import {
   ShoppingBag, 
   Calendar, 
   User, 
-  ChevronRight, 
   Filter,
   ArrowUpRight
 } from "lucide-react";
@@ -26,6 +25,25 @@ export default function Orders() {
       setOrders(data);
     } catch (err) {
       console.error("Error fetching orders", err);
+    }
+  };
+
+  // 🎨 Status Badge Helper
+  const getStatusStyles = (status) => {
+    const s = status?.toLowerCase();
+    switch (s) {
+      case "completed":
+      case "delivered":
+      case "paid":
+        return "bg-emerald-100 text-emerald-800 border-emerald-200";
+      case "pending":
+      case "processing":
+        return "bg-amber-100 text-amber-800 border-amber-200";
+      case "cancelled":
+      case "failed":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
@@ -131,9 +149,9 @@ export default function Orders() {
                       </td>
 
                       <td className="p-4">
-                        {/* Assuming a default 'Paid' or 'Completed' status for UI polish */}
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                          Completed
+                        {/* FIXED: Using dynamic status from order data */}
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${getStatusStyles(order.status)}`}>
+                          {order.status || 'Unknown'}
                         </span>
                       </td>
 
@@ -149,7 +167,6 @@ export default function Orders() {
             </table>
           </div>
           
-          {/* Footer Info */}
           <div className="p-4 bg-gray-50/50 border-t border-gray-100">
             <p className="text-xs text-gray-400 uppercase font-semibold">
               Showing {filteredOrders.length} transactions
