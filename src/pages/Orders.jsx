@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
 import { getOrders } from "../services/orderService";
 import { useNavigate } from "react-router-dom";
+import { 
+  Search, 
+  ShoppingBag, 
+  Calendar, 
+  User, 
+  ChevronRight, 
+  Filter,
+  ArrowUpRight
+} from "lucide-react";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,48 +29,133 @@ export default function Orders() {
     }
   };
 
+  // 🔍 Filter Logic
+  const filteredOrders = orders.filter((order) =>
+    order.clientName?.toLowerCase().includes(search.toLowerCase()) ||
+    order.id?.toString().includes(search)
+  );
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">Orders</h2>
-
-      <div className="bg-white rounded-xl shadow p-4">
+    <div className="p-6 bg-gray-50 min-h-screen font-sans">
+      <div className="max-w-7xl mx-auto">
         
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b">
-              <th className="p-3">Order ID</th>
-              <th className="p-3">Client Name</th>
-              <th className="p-3">Total Amount</th>
-              <th className="p-3">Date</th>
-            </tr>
-          </thead>
+        {/* --- Header Section --- */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900">Orders</h2>
+            <p className="text-gray-500 mt-1">Track and manage client transactions.</p>
+          </div>
+          
+          <div className="flex items-center gap-3">
+             <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search orders or clients..."
+                className="pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all w-full md:w-64 shadow-sm"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="p-2.5 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 shadow-sm">
+              <Filter size={20} />
+            </button>
+          </div>
+        </header>
 
-          <tbody>
-            {orders.length === 0 ? (
-              <tr>
-                <td className="p-3">No orders found</td>
-              </tr>
-            ) : (
-              orders.map((order) => (
-                <tr
-                key={order.id}
-                onClick={() => navigate(`/orders/${order.id}`)}
-                className="border-b hover:bg-gray-50 cursor-pointer">
-                        <td className="p-3 font-semibold">{order.id}</td>
-                    <td className="p-3">{order.clientName}</td>
-                    <td className="p-3 text-green-600 font-semibold">₹{order.total}</td>
-                    <td className="p-3 text-gray-500">
-                        {order.orderDate
-                        ? new Date(order.orderDate).toLocaleDateString()
-                        : "N/A"}
-                    </td>
+        {/* --- Table Container --- */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-gray-50/50 text-gray-600 text-sm uppercase tracking-wider">
+                  <th className="p-4 font-semibold">Order Details</th>
+                  <th className="p-4 font-semibold">Client</th>
+                  <th className="p-4 font-semibold">Date</th>
+                  <th className="p-4 font-semibold">Amount</th>
+                  <th className="p-4 font-semibold">Status</th>
+                  <th className="p-4 font-semibold text-right">View</th>
                 </tr>
-              ))
-            )}
-          </tbody>
+              </thead>
 
-        </table>
+              <tbody className="divide-y divide-gray-100">
+                {filteredOrders.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="p-12 text-center">
+                      <div className="flex flex-col items-center">
+                        <ShoppingBag className="text-gray-300 mb-3" size={48} />
+                        <p className="text-gray-500 text-lg">No orders found</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredOrders.map((order) => (
+                    <tr
+                      key={order.id}
+                      onClick={() => navigate(`/orders/${order.id}`)}
+                      className="group hover:bg-indigo-50/30 cursor-pointer transition-colors"
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                            <ShoppingBag size={18} />
+                          </div>
+                          <span className="font-bold text-gray-800">#{order.id}</span>
+                        </div>
+                      </td>
+                      
+                      <td className="p-4">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <User size={16} className="text-gray-400" />
+                          <span className="font-medium">{order.clientName}</span>
+                        </div>
+                      </td>
 
+                      <td className="p-4">
+                        <div className="flex items-center gap-2 text-gray-500 text-sm">
+                          <Calendar size={16} />
+                          {order.orderDate
+                            ? new Date(order.orderDate).toLocaleDateString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                              })
+                            : "N/A"}
+                        </div>
+                      </td>
+
+                      <td className="p-4">
+                        <span className="text-lg font-bold text-gray-900">
+                          ₹{order.total?.toLocaleString() || "0"}
+                        </span>
+                      </td>
+
+                      <td className="p-4">
+                        {/* Assuming a default 'Paid' or 'Completed' status for UI polish */}
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                          Completed
+                        </span>
+                      </td>
+
+                      <td className="p-4 text-right">
+                        <div className="inline-flex items-center justify-center p-2 text-gray-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 rounded-full transition-all">
+                          <ArrowUpRight size={20} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          
+          {/* Footer Info */}
+          <div className="p-4 bg-gray-50/50 border-t border-gray-100">
+            <p className="text-xs text-gray-400 uppercase font-semibold">
+              Showing {filteredOrders.length} transactions
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
