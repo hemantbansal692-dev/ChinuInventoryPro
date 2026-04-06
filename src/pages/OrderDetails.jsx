@@ -57,7 +57,9 @@ export default function OrderDetails() {
         <p><b>Client:</b> {order.clientName}</p>
         <p><b>Phone:</b> {order.clientPhone}</p>
         <p><b>Address:</b> {order.clientAddress}</p>
-        <p><b>Date:</b> {order.orderDate}</p>
+        <p><b>Date:</b> {order.orderDate
+                        ? new Date(order.orderDate).toLocaleDateString()
+                        : "N/A"}</p>
       </div>
 
       {/* Items Table */}
