@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getOrderById } from "../services/orderService";
-import { updateOrder } from "../services/orderService";
-import { getProducts } from "../services/orderService";
-import { useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getOrderById, updateOrder, getProducts } from "../services/orderService";
+import { 
+  User, Phone, MapPin, Truck, Hash, 
+  Package, Plus, Trash2, Save, ArrowLeft,
+  Search, IndianRupee 
+} from "lucide-react";
 
 export default function EditOrder() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
   const suggestionRefs = useRef({});
@@ -14,8 +17,7 @@ export default function EditOrder() {
   useEffect(() => {
     fetchOrder();
     fetchProducts();
-
-  }, []);
+  }, [id]);
 
   const fetchOrder = async () => {
     const data = await getOrderById(id);
@@ -23,379 +25,295 @@ export default function EditOrder() {
   };
 
   const fetchProducts = async () => {
-  const data = await getProducts();
-  setProducts(data);
-};
+    const data = await getProducts();
+    setProducts(data);
+  };
 
   const calculateTotal = () => {
-  if (!order) return 0;
-
-  let itemsTotal = order.items.reduce((sum, item) => {
-    const rate = item.rate || item.price || item.sellingPrice || 0;
-    return sum + (item.quantity || 0) * rate;
-  }, 0);
-
-  return (
-    itemsTotal +
-    (order.packingCharges || 0) +
-    (order.otherCharges || 0) +
-    (order.gstAmount || 0)
-  );
-};
-
-  if (!order) return <p>Loading...</p>;
-
-  return (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">Edit Order</h2>
-
-            {/* Client Info */}
-            <div className="bg-white p-4 rounded-xl shadow mb-6">
-
-                <h3 className="font-semibold mb-4">Client Details</h3>
-
-                <div className="grid grid-cols-3 gap-4 items-center">
-
-                    {/* Client Name */}
-            <div className="flex items-center gap-2">
-            <span className="text-sm whitespace-nowrap">Client:</span>
-            <input
-                className="border p-2 w-full"
-                value={order.clientName || ""}
-                onChange={(e) =>
-                setOrder({ ...order, clientName: e.target.value })
-                }
-            />
-            </div>
-
-            {/* Phone */}
-            <div className="flex items-center gap-2">
-                <span className="text-sm whitespace-nowrap">Phone:</span>
-                <input
-                    className="border p-2 w-full"
-                    value={order.clientPhone || ""}
-                    onChange={(e) =>
-                    setOrder({ ...order, clientPhone: e.target.value })
-                    }
-                />
-            </div>
-
-            {/* GST */}
-            <div className="flex items-center gap-2">
-                <span className="text-sm whitespace-nowrap">GST:</span>
-                <input
-                    className="border p-2 w-full"
-                    value={order.gstNumber || ""}
-                    onChange={(e) =>
-                    setOrder({ ...order, gstNumber: e.target.value })
-                    }
-                />
-            </div>
-
-            {/* Address */}
-            <div className="flex items-center gap-2 col-span-2">
-                <span className="text-sm whitespace-nowrap">Address:</span>
-                <input
-                    className="border p-2 w-full"
-                    value={order.clientAddress || ""}
-                    onChange={(e) =>
-                    setOrder({ ...order, clientAddress: e.target.value })
-                    }
-                />
-            </div>
-
-            {/* Transport */}
-                <div className="flex items-center gap-2">
-                <span className="text-sm whitespace-nowrap">Transport:</span>
-                <input
-                    className="border p-2 w-full"
-                    value={order.transport || ""}
-                    onChange={(e) =>
-                    setOrder({ ...order, transport: e.target.value })
-                    }
-                />
-            </div>
-
-            {/* Transport Address */}
-            <div className="flex items-center gap-2 col-span-3">
-                <span className="text-sm whitespace-nowrap">Transport Addr:</span>
-                <input
-                    className="border p-2 w-full"
-                    value={order.transportAddress || ""}
-                    onChange={(e) =>
-                    setOrder({ ...order, transportAddress: e.target.value })
-                    }
-                />
-            </div>
-
-
-
-        </div>
-
-      </div>
-      <div className="bg-white p-4 rounded-xl shadow mb-6">
-  <h3 className="font-semibold mb-4">Items</h3>
-
-  <div className="grid grid-cols-5 gap-3 mb-2 font-semibold text-sm text-gray-600">
-  <div>Product</div>
-  <div>Qty</div>
-  <div>Rate</div>
-  <div>Amount</div>
-  <div>Action</div>
-</div>
-
-  {order.items.map((item, index) => {
-    const rate = item.rate || item.price || item.sellingPrice || 0;
+    if (!order) return 0;
+    let itemsTotal = order.items.reduce((sum, item) => {
+      const rate = item.rate || item.price || item.sellingPrice || 0;
+      return sum + (item.quantity || 0) * rate;
+    }, 0);
 
     return (
-      <div key={index} className="grid grid-cols-5 gap-3 mb-3">
+      itemsTotal +
+      (order.packingCharges || 0) +
+      (order.otherCharges || 0) +
+      (order.gstAmount || 0)
+    );
+  };
 
-        {/* Product Name */}
-        <div className="relative">
+  if (!order) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+    </div>
+  );
 
-            <input
-                className="border p-2 w-full"
-                placeholder="Search product..."
-                value={item.productName || ""}
-                onChange={(e) => {
-                const updatedItems = [...order.items];
-                updatedItems[index].productName = e.target.value;
-                updatedItems[index].search = e.target.value;
-                updatedItems[index].activeIndex = 0;
-                setOrder({ ...order, items: updatedItems });
-                }}
-
-                onKeyDown={(e) => {
-                    const filtered = products.filter((p) =>
-                        p.name.toLowerCase().includes((item.search || "").toLowerCase())
-                    );
-
-                    if (!filtered.length) return;
-
-                    let newIndex = item.activeIndex || 0;
-
-                    // ⬇️ DOWN
-                    if (e.key === "ArrowDown") {
-                        e.preventDefault();
-                        newIndex = (newIndex + 1) % filtered.length;
-                    }
-
-                    // ⬆️ UP
-                    if (e.key === "ArrowUp") {
-                        e.preventDefault();
-                        newIndex = (newIndex - 1 + filtered.length) % filtered.length;
-                    }
-
-                    // ⏎ ENTER
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        const selected = filtered[newIndex];
-
-                        const updatedItems = [...order.items];
-                        updatedItems[index].productName = selected.name;
-                        updatedItems[index].rate = selected.sellingPrice || 0;
-                        updatedItems[index].search = "";
-                        updatedItems[index].activeIndex = 0;
-
-                        setOrder({ ...order, items: updatedItems });
-                        return;
-                    }
-
-                    // update index
-                    const updatedItems = [...order.items];
-                    updatedItems[index].activeIndex = newIndex;
-                    setOrder({ ...order, items: updatedItems });
-
-                    // ✅ SCROLL AFTER UPDATE
-                    setTimeout(() => {
-                        const el = suggestionRefs.current[`${index}-${newIndex}`];
-                        if (el) {
-                        el.scrollIntoView({
-                            block: "nearest",
-                            behavior: "auto"
-                        });
-                        }
-                    }, 0);
-                }}
-            />
-
-            {/* Suggestions */}
-            {item.search && (
-                <div className="absolute bg-white border w-full max-h-40 overflow-y-auto z-10">
-                {products
-                    .filter((p) =>
-                    p.name.toLowerCase().includes(item.search.toLowerCase())
-                    )
-                    .slice(0, 5)
-                    .map((p, i) => (
-                    <div
-                        key={p.id}
-                        ref={(el) => {
-                            suggestionRefs.current[`${index}-${i}`] = el;
-                        }}
-                        className={`p-2 cursor-pointer ${
-                        i === item.activeIndex ? "bg-blue-100" : "hover:bg-gray-100"
-                        }`}
-                        onClick={() => {
-                        const updatedItems = [...order.items];
-                        updatedItems[index].productName = p.name;
-                        updatedItems[index].rate = p.sellingPrice || 0;
-                        updatedItems[index].search = "";
-                        updatedItems[index].activeIndex = 0;
-
-                        setOrder({ ...order, items: updatedItems });
-                        }}
-                    >
-                        {p.name} (₹{p.sellingPrice})
-                    </div>
-                    ))}
-                </div>
-            )}
-
-        </div>
-
-        {/* Quantity */}
-        <input
-          type="number"
-          className="border p-2"
-          value={item.quantity}
-          onChange={(e) => {
-            const updatedItems = [...order.items];
-            updatedItems[index].quantity = Number(e.target.value);
-            setOrder({ ...order, items: updatedItems });
-          }}
-        />
-
-        {/* Rate */}
-        <input
-          type="number"
-          className="border p-2"
-          value={rate}
-          onChange={(e) => {
-            const updatedItems = [...order.items];
-            updatedItems[index].rate = Number(e.target.value);
-            setOrder({ ...order, items: updatedItems });
-          }}
-        />
-
-        {/* Amount */}
-        <div className="flex items-center">
-          ₹{item.quantity * rate}
-        </div>
-          
-        <button
-            onClick={() => {
-                const updatedItems = order.items.filter((_, i) => i !== index);
-                setOrder({ ...order, items: updatedItems });
-            }}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-            >
-            ❌
-        </button>
-
+  return (
+    <div className="p-6 bg-gray-50 min-h-screen font-sans pb-24">
+      <div className="max-w-6xl mx-auto">
         
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+              <ArrowLeft size={24} />
+            </button>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">Edit Order</h2>
+              <p className="text-gray-500">Order ID: #{id}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left: Client & Transport Details */}
+          <div className="lg:col-span-1 space-y-6">
+            <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <User size={18} className="text-indigo-600" /> Client Details
+              </h3>
+              
+              <div className="space-y-4">
+                <FormInput label="Client Name" icon={<User size={16}/>} value={order.clientName} 
+                  onChange={(v) => setOrder({...order, clientName: v})} />
+                
+                <FormInput label="Phone" icon={<Phone size={16}/>} value={order.clientPhone} 
+                  onChange={(v) => setOrder({...order, clientPhone: v})} />
+                
+                <FormInput label="GST Number" icon={<Hash size={16}/>} value={order.gstNumber} 
+                  onChange={(v) => setOrder({...order, gstNumber: v})} />
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-gray-400 uppercase flex items-center gap-1">
+                    <MapPin size={12}/> Address
+                  </label>
+                  <textarea 
+                    className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                    rows="3"
+                    value={order.clientAddress || ""}
+                    onChange={(e) => setOrder({...order, clientAddress: e.target.value})}
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <Truck size={18} className="text-indigo-600" /> Transport
+              </h3>
+              <div className="space-y-4">
+                <FormInput label="Transport Name" value={order.transport} 
+                  onChange={(v) => setOrder({...order, transport: v})} />
+                <FormInput label="Transport Address" value={order.transportAddress} 
+                  onChange={(v) => setOrder({...order, transportAddress: v})} />
+              </div>
+            </section>
+          </div>
+
+          {/* Right: Items Table */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <Package size={20} className="text-indigo-600" /> Items List
+                </h3>
+                <button 
+                  onClick={() => {
+                    const newItem = { productName: "", quantity: 1, rate: 0 };
+                    setOrder({ ...order, items: [...order.items, newItem] });
+                  }}
+                  className="flex items-center gap-2 text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors font-semibold text-sm"
+                >
+                  <Plus size={18} /> Add Item
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-100">
+                    <tr className="text-xs font-bold text-gray-400 uppercase">
+                      <th className="p-4 text-left">Product</th>
+                      <th className="p-4 text-center w-24">Qty</th>
+                      <th className="p-4 text-left w-32">Rate</th>
+                      <th className="p-4 text-right">Amount</th>
+                      <th className="p-4 text-center w-16"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {order.items.map((item, index) => (
+                      <tr key={index} className="group hover:bg-gray-50/50 transition-colors">
+                        <td className="p-4 relative">
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+                            <input
+                              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-indigo-500 outline-none"
+                              placeholder="Type product name..."
+                              value={item.productName || ""}
+                              onChange={(e) => {
+                                const updatedItems = [...order.items];
+                                updatedItems[index].productName = e.target.value;
+                                updatedItems[index].search = e.target.value;
+                                updatedItems[index].activeIndex = 0;
+                                setOrder({ ...order, items: updatedItems });
+                              }}
+                              onKeyDown={(e) => handleKeyDown(e, index, item)}
+                            />
+                            {/* Autocomplete Dropdown */}
+                            {item.search && (
+                              <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 shadow-xl rounded-xl z-50 max-h-48 overflow-y-auto">
+                                {products
+                                  .filter((p) => p.name.toLowerCase().includes(item.search.toLowerCase()))
+                                  .slice(0, 8)
+                                  .map((p, i) => (
+                                    <div
+                                      key={p.id}
+                                      ref={(el) => (suggestionRefs.current[`${index}-${i}`] = el)}
+                                      className={`p-3 text-sm cursor-pointer border-l-4 transition-all ${
+                                        i === item.activeIndex ? "bg-indigo-50 border-indigo-600 text-indigo-700 font-bold" : "border-transparent hover:bg-gray-50"
+                                      }`}
+                                      onClick={() => selectProduct(p, index)}
+                                    >
+                                      {p.name} <span className="text-gray-400 font-normal ml-2">₹{p.sellingPrice}</span>
+                                    </div>
+                                  ))}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <input type="number" className="w-full border border-gray-200 rounded-lg p-2 text-center text-sm outline-none" 
+                            value={item.quantity} onChange={(e) => updateItemField(index, 'quantity', Number(e.target.value))} />
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-1">
+                            <span className="text-gray-400">₹</span>
+                            <input type="number" className="w-full border border-gray-200 rounded-lg p-2 text-sm outline-none" 
+                              value={item.rate || item.price || item.sellingPrice || 0} onChange={(e) => updateItemField(index, 'rate', Number(e.target.value))} />
+                          </div>
+                        </td>
+                        <td className="p-4 text-right font-mono font-bold text-gray-700">
+                          ₹{((item.quantity || 0) * (item.rate || item.price || item.sellingPrice || 0)).toLocaleString()}
+                        </td>
+                        <td className="p-4 text-center">
+                          <button onClick={() => removeItem(index)} className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Charges Summary */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <IndianRupee size={18} className="text-indigo-600" /> Additional Charges
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <FormInput type="number" label="Packing Charges" value={order.packingCharges} 
+                  onChange={(v) => setOrder({...order, packingCharges: Number(v)})} />
+                <FormInput type="number" label="Other Charges" value={order.otherCharges} 
+                  onChange={(v) => setOrder({...order, otherCharges: Number(v)})} />
+                <FormInput type="number" label="GST Amount" value={order.gstAmount} 
+                  onChange={(v) => setOrder({...order, gstAmount: Number(v)})} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Sticky Save Bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-2xl z-40">
+          <div className="max-w-6xl mx-auto flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-gray-500 text-xs font-bold uppercase tracking-widest">Grand Total</span>
+              <span className="text-2xl font-black text-emerald-600 font-mono">₹{calculateTotal().toLocaleString()}</span>
+            </div>
+            <button
+              onClick={handleSave}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-indigo-200"
+            >
+              <Save size={20} /> Save Changes
+            </button>
+          </div>
+        </div>
 
       </div>
-      
-
-      
-    );
-  })}
-
-    <button
-    onClick={() => {
-        const newItem = {
-        productName: "",
-        quantity: 1,
-        rate: 0
-        };
-
-        setOrder({
-        ...order,
-        items: [...order.items, newItem]
-        });
-    }}
-    className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-    >
-    + Add Item
-    </button>
-
-     <div className="bg-white p-4 rounded-xl shadow mb-6">
-
-  <div className="grid grid-cols-4 gap-4 items-center">
-
-            <div className="flex items-center gap-2">
-            <span className="text-sm">Packing:</span>
-            <input
-                type="number"
-                className="border p-2 w-full"
-                value={order.packingCharges || 0}
-                onChange={(e) =>
-                setOrder({ ...order, packingCharges: Number(e.target.value) })
-                }
-            />
-            </div>
-
-            <div className="flex items-center gap-2">
-            <span className="text-sm">Other:</span>
-            <input
-                type="number"
-                className="border p-2 w-full"
-                value={order.otherCharges || 0}
-                onChange={(e) =>
-                setOrder({ ...order, otherCharges: Number(e.target.value) })
-                }
-            />
-            </div>
-
-            <div className="flex items-center gap-2">
-            <span className="text-sm">GST:</span>
-            <input
-                type="number"
-                className="border p-2 w-full"
-                value={order.gstAmount || 0}
-                onChange={(e) =>
-                setOrder({ ...order, gstAmount: Number(e.target.value) })
-                }
-            />
-            </div>
-
-            {/* Total */}
-            <div className="text-right font-bold text-green-600">
-            Total: ₹{calculateTotal()}
-            </div>
-
-        </div>
-
     </div>
+  );
 
-    <div className="bg-white p-4 rounded-xl shadow mb-6">
-       <h3 className="text-xl font-bold text-green-600">
-            Total Amount: ₹{calculateTotal()}
-        </h3>
-    </div>
-    
-    
-</div>
+  // Helper Functions to keep render clean
+  function updateItemField(index, field, value) {
+    const updatedItems = [...order.items];
+    updatedItems[index][field] = value;
+    setOrder({ ...order, items: updatedItems });
+  }
 
+  function removeItem(index) {
+    const updatedItems = order.items.filter((_, i) => i !== index);
+    setOrder({ ...order, items: updatedItems });
+  }
 
+  function selectProduct(p, index) {
+    const updatedItems = [...order.items];
+    updatedItems[index].productName = p.name;
+    updatedItems[index].rate = p.sellingPrice || 0;
+    updatedItems[index].search = "";
+    updatedItems[index].activeIndex = 0;
+    setOrder({ ...order, items: updatedItems });
+  }
 
-      {/* Save Button */}
-        <button
-            onClick={async () => {
-            const updatedOrder = {
-                ...order,
-                total: calculateTotal()
-            };
+  async function handleSave() {
+    const updatedOrder = { ...order, total: calculateTotal() };
+    await updateOrder(id, updatedOrder);
+    alert("Order updated successfully!");
+  }
 
-            await updateOrder(id, updatedOrder);
-            alert("Order updated!");
-            
-            }}
-            className="bg-green-600 text-white px-6 py-2 rounded"
-            >
-            Save Changes
-        </button>
+  function handleKeyDown(e, index, item) {
+    const filtered = products.filter((p) => p.name.toLowerCase().includes((item.search || "").toLowerCase()));
+    if (!filtered.length) return;
+    let newIndex = item.activeIndex || 0;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      newIndex = (newIndex + 1) % filtered.length;
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      newIndex = (newIndex - 1 + filtered.length) % filtered.length;
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      selectProduct(filtered[newIndex], index);
+      return;
+    }
+
+    const updatedItems = [...order.items];
+    updatedItems[index].activeIndex = newIndex;
+    setOrder({ ...order, items: updatedItems });
+
+    setTimeout(() => {
+      const el = suggestionRefs.current[`${index}-${newIndex}`];
+      if (el) el.scrollIntoView({ block: "nearest", behavior: "auto" });
+    }, 0);
+  }
+}
+
+// Reusable Small Component
+function FormInput({ label, value, onChange, icon, type = "text" }) {
+  return (
+    <div className="space-y-1">
+      <label className="text-xs font-bold text-gray-400 uppercase flex items-center gap-1">
+        {icon} {label}
+      </label>
+      <input
+        type={type}
+        className="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+        value={value || ""}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </div>
   );
 }
