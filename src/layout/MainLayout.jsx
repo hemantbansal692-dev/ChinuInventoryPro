@@ -1,7 +1,8 @@
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import { Outlet } from "react-router-dom";
 
-export default function MainLayout({ children }) {
+export default function MainLayout() {
   return (
     <div className="flex h-screen bg-gray-100">
       
@@ -16,7 +17,7 @@ export default function MainLayout({ children }) {
 
         {/* Content */}
         <div className="p-6 overflow-y-auto">
-          {children}
+          <Outlet /> {/* 🔥 THIS FIXES EVERYTHING */}
         </div>
 
       </div>
