@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { 
   BarChart3, 
   Layers, 
@@ -12,33 +13,39 @@ import {
   History,
   LayoutDashboard,
   SmartphoneNfc
-} from "lucide-react";
+} from "lucide-react";  
 
 export default function LandingPage() {
+
+    const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-700">
       
       {/* ─── PREMIUM NAVIGATION ─── */}
-      <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-8 py-5">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 group-hover:bg-blue-700 transition-all">
-              <Store className="text-white" size={22} />
+        <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 px-8 py-5">
+            <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <div className="flex items-center gap-3 group cursor-pointer">
+                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 group-hover:bg-blue-700 transition-all">
+                <Store className="text-white" size={22} />
+                </div>
+                <span className="text-2xl font-black tracking-tighter text-slate-900">
+                CHINU<span className="text-blue-600">.</span>
+                </span>
             </div>
-            <span className="text-2xl font-black tracking-tighter text-slate-900">
-              CHINU<span className="text-blue-600">.</span>
-            </span>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-10 text-sm font-bold text-slate-500 uppercase tracking-widest">
-            <a href="#features" className="hover:text-blue-600 transition-colors">Platform</a>
-            <a href="#impact" className="hover:text-blue-600 transition-colors">Impact</a>
-            <button className="px-6 py-3 rounded-xl bg-slate-900 text-white hover:bg-blue-600 transition-all shadow-xl active:scale-95">
-              Open Dashboard
-            </button>
-          </div>
-        </div>
-      </nav>
+            
+            <div className="hidden md:flex items-center gap-10 text-sm font-bold text-slate-500 uppercase tracking-widest">
+                <a href="#features" className="hover:text-blue-600 transition-colors">Platform</a>
+                <a href="#impact" className="hover:text-blue-600 transition-colors">Impact</a>
+                <button
+                    onClick={() => navigate("/login")}
+                    className="px-6 py-3 rounded-xl bg-slate-900 text-white hover:bg-blue-600 transition-all shadow-xl active:scale-95"
+                    >
+                    Open Dashboard
+                </button>
+            </div>
+            </div>
+        </nav>
 
       {/* ─── HERO: THE POWER OF EASE ─── */}
       <section className="relative pt-48 pb-24 px-6 bg-[#f8fafc]">

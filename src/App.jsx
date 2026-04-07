@@ -8,6 +8,7 @@ import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
 import EditOrder from "./pages/EditOrder";
 import Inventory from "./pages/Inventory";
+import Login from "./pages/Login";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         
         {/* ✅ Public Route */}
         <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
 
         {/* ✅ App Routes (with layout) */}
         <Route element={<MainLayout />}>
