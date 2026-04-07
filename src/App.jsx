@@ -5,7 +5,7 @@ import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
 import EditOrder from "./pages/EditOrder";
 import Inventory from "./pages/Inventory";
-
+import LandingPage from "./pages/LandingPage";
 
 
 export default function App() {
@@ -13,7 +13,8 @@ export default function App() {
     <BrowserRouter>
       <MainLayout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/orders/:id" element={<OrderDetails />} />
           <Route path="/orders/edit/:id" element={<EditOrder />} />
