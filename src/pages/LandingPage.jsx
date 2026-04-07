@@ -1,16 +1,19 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900">
+      
       {/* Navbar */}
       <nav className="flex justify-between items-center px-8 py-5">
         <h1 className="text-2xl font-bold">Chinu Inventory</h1>
         <div className="space-x-4">
-          <Button variant="ghost">Login</Button>
-          <Button>Get Started</Button>
+          <button className="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-200">
+            Login
+          </button>
+          <button className="px-4 py-2 rounded-lg bg-black text-white hover:opacity-90">
+            Get Started
+          </button>
         </div>
       </nav>
 
@@ -23,12 +26,19 @@ export default function LandingPage() {
         >
           Manage Your Shop Smarter 🚀
         </motion.h2>
+
         <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
           Inventory, Orders, Billing, and Reports — everything your shop needs in one powerful system.
         </p>
+
         <div className="mt-8 flex justify-center gap-4">
-          <Button className="px-6 py-3 text-lg">Start Free</Button>
-          <Button variant="outline" className="px-6 py-3 text-lg">View Demo</Button>
+          <button className="px-6 py-3 text-lg rounded-xl bg-black text-white hover:opacity-90">
+            Start Free
+          </button>
+
+          <button className="px-6 py-3 text-lg rounded-xl border border-gray-300 hover:bg-gray-100">
+            View Demo
+          </button>
         </div>
       </section>
 
@@ -54,12 +64,10 @@ export default function LandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.2 }}
           >
-            <Card className="rounded-2xl shadow-lg">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold">{feature.title}</h3>
-                <p className="mt-3 text-gray-600">{feature.desc}</p>
-              </CardContent>
-            </Card>
+            <div className="rounded-2xl shadow-lg bg-white p-6">
+              <h3 className="text-xl font-semibold">{feature.title}</h3>
+              <p className="mt-3 text-gray-600">{feature.desc}</p>
+            </div>
           </motion.div>
         ))}
       </section>
@@ -68,7 +76,10 @@ export default function LandingPage() {
       <section className="text-center mt-24 px-6">
         <h2 className="text-3xl font-bold">Ready to grow your business?</h2>
         <p className="mt-4 text-gray-600">Start using Chinu Inventory today.</p>
-        <Button className="mt-6 px-8 py-3 text-lg">Get Started</Button>
+
+        <button className="mt-6 px-8 py-3 text-lg rounded-xl bg-black text-white hover:opacity-90">
+          Get Started
+        </button>
       </section>
 
       {/* Footer */}
