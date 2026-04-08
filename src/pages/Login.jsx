@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+
 import { 
   Store, 
   Mail, 
@@ -16,12 +18,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
     setIsLoading(true);
     // Simulate authentication delay
-    setTimeout(() => setIsLoading(false), 2000);
+    setTimeout(() => {
+    setIsLoading(false);
+    navigate("/dashboard"); // ✅ move here
+  }, 1000);
   };
 
   return (
